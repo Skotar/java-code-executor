@@ -1,0 +1,16 @@
+<idea-plugin>
+  <id>org.jetbrains.plugins.sample.ToolWindow</id>
+  <name>Tool Window Demo</name>
+  <description>This sample plugin illustrates how to create your custom tool window.</description>
+  <version>2.0</version>
+  <vendor>JetBrains</vendor>
+
+  <idea-version since-build="141.0"/>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <toolWindow id="Alfresco" secondary="true" anchor="right"
+                factoryClass="pl.beone.javacodeexecutor.plugin.JavaCodeExecutorToolWindowFactory"/>
+
+  </extensions>
+
+</idea-plugin>

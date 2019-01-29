@@ -1,0 +1,8 @@
+<webscript>
+    <shortname>Execute java code</shortname>
+    <description>Execute java code</description>
+    <url>/api/javaCodeExecutor/execute</url>
+    <format default="json"/>
+    <authentication>admin</authentication>
+    <transaction>required</transaction>
+</webscript>
