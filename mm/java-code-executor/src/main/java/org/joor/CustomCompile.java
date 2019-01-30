@@ -40,7 +40,7 @@ import static org.joor.Compile.ClassFileManager;
  */
 public class CustomCompile {
 
-    public static Class<?> compileWithoutLoadingToClassLoader(String className, String content, CompileOptions compileOptions) {
+    public static Class<?> compileAndLoadToCustomClassLoader(String className, String content, CompileOptions compileOptions) {
         ClassLoader cl = MethodHandles.lookup().lookupClass().getClassLoader();
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();

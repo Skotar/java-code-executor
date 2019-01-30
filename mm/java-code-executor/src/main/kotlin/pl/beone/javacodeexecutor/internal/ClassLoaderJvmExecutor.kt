@@ -20,7 +20,7 @@ class ClassLoaderJvmExecutor(private val autowireCapableBeanFactory: AutowireCap
 
     override fun execute(code: ByteArray): ExecutionResult {
         return grantPermissionsAndRun {
-            val classInstance = on(CustomCompile.compileWithoutLoadingToClassLoader(getFullClassName(code),
+            val classInstance = on(CustomCompile.compileAndLoadToCustomClassLoader(getFullClassName(code),
                     String(code),
                     CompileOptions()))
                     .create()
