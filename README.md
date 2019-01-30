@@ -14,7 +14,7 @@ The project consists of two parts: Alfresco platform module and IntelliJ plugin.
 * messages writing using System.out are accumulated and returned to user
 * IntelliJ plugin allows you executing code directly from IDE
 
-## How does it is work?
+## How does it work?
 
 1. You have a piece of code. The only requirement is to put **public void execute()** method because it is input to your code. Example:
 ```
