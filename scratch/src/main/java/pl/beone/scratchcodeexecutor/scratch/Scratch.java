@@ -23,6 +23,7 @@ public class Scratch {
         NodeRef person = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
 
         System.out.println(nodeService.getProperty(person, ContentModel.PROP_FIRSTNAME));
+        System.out.println("End");
     }
 
 }
