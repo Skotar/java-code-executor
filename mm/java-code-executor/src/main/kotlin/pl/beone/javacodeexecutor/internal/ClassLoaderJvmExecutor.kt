@@ -5,6 +5,7 @@ import org.joor.CustomCompile
 import org.joor.Reflect.on
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory
 import pl.beone.javacodeexecutor.applicationmodel.ExecutionResult
+import pl.beone.javacodeexecutor.applicationmodel.exception.JavaCodeExecutionException
 import pl.beone.javacodeexecutor.contract.JvmExecutor
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
@@ -34,6 +35,7 @@ class ClassLoaderJvmExecutor(private val autowireCapableBeanFactory: AutowireCap
         }
     }
 
+    // potential security issues
     private fun <T> grantPermissionsAndRun(block: () -> T): T {
         val defaultSecurityManager = System.getSecurityManager()
         System.setSecurityManager(object : SecurityManager() {
@@ -55,13 +57,13 @@ class ClassLoaderJvmExecutor(private val autowireCapableBeanFactory: AutowireCap
             String(code).lineSequence()
                     .firstOrNull { packageRegex.find(it) != null }
                     ?.let { packageRegex.find(it)!!.groupValues[1] }
-                    ?: throw Exception("No package")
+                    ?: throw JavaCodeExecutionException("Package name not specified")
 
     private fun getClassName(code: ByteArray): String =
             String(code).lineSequence()
                     .firstOrNull { classNameRegex.find(it) != null }
                     ?.let { classNameRegex.find(it)!!.groupValues[3] }
-                    ?: throw Exception("No class name")
+                    ?: throw JavaCodeExecutionException("Class name not specified")
 
     private fun runExecuteFunctionAndCollectMessagesFromSystemOut(classInstance: Any): List<String> {
         val originalStdout = System.out
