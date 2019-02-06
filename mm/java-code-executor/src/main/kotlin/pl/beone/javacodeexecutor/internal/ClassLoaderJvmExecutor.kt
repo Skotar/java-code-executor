@@ -103,7 +103,7 @@ class ClassLoaderJvmExecutor(private val autowireCapableBeanFactory: AutowireCap
     }
 
     private fun createLoggerWithRedirectedOutput(qualifiedName: String): Pair<Logger, StringWriter> {
-        val logger = org.apache.log4j.Logger.getLogger(qualifiedName)
+        val logger = org.apache.log4j.Logger.getLogger("$qualifiedName-${getUniqueId()}")
         logger.level = Level.ALL
 
         val stringWriter = StringWriter()
@@ -112,6 +112,9 @@ class ClassLoaderJvmExecutor(private val autowireCapableBeanFactory: AutowireCap
 
         return Pair(Log4jLoggerAdapterFactory.getLogger(logger), stringWriter)
     }
+
+    private fun getUniqueId(): Long =
+            Thread.currentThread().id
 
     private fun injectLoggerIfConditionsAreMet(classInstance: Any, logger: Logger) {
         val loggerFields = classInstance::class.java.declaredFields
