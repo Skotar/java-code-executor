@@ -12,6 +12,7 @@ import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.client.HttpClientBuilder
+import java.io.IOException
 import java.net.HttpURLConnection.HTTP_INTERNAL_ERROR
 import java.net.HttpURLConnection.HTTP_OK
 import java.net.URI
@@ -78,16 +79,20 @@ class JavaCodeExecutorRunner(private val host: String,
 
         return when (this.statusLine.statusCode) {
             HTTP_OK             ->
-                entityJsonObject.getMessages()
+                entityJsonObject!!.getMessages()
             HTTP_INTERNAL_ERROR ->
-                listOf(this.statusLine.toString(), uri.toString(), "") + entityJsonObject.getMessage() + entityJsonObject.getStackTrace()
+                listOf(this.statusLine.toString(), uri.toString(), "") + entityJsonObject!!.getMessage() + entityJsonObject.getStackTrace()
             else                ->
-                listOf(this.statusLine.toString(), uri.toString(), "") + entityJsonObject.getMessage()
+                listOf(this.statusLine.toString(), uri.toString(), "") + (entityJsonObject?.getMessage() ?: emptyList())
         }
     }
 
-    private fun HttpResponse.parseAsJsonObject(): JsonObject =
-            JsonParser().parse(IOUtils.toString(this.entity.content, Charset.forName("UTF-8"))).asJsonObject
+    private fun HttpResponse.parseAsJsonObject(): JsonObject? =
+            try {
+                JsonParser().parse(IOUtils.toString(this.entity.content, Charset.forName("UTF-8"))).asJsonObject
+            } catch (e: Exception) {
+                null
+            }
 
     private fun JsonObject.getMessages(): List<String> =
             this.asJsonObject.getAsJsonArray("messages")
