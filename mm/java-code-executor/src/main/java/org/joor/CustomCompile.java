@@ -34,13 +34,11 @@ import static org.joor.Compile.ClassFileManager;
 
 
 /**
- * A utility that simplifies in-memory compilation of new classes.
- *
- * @author Lukas Eder
+ * Based on {@link Compile}
  */
 public class CustomCompile {
 
-    public static Class<?> compileAndLoadToCustomClassLoader(String className, String content, CompileOptions compileOptions) {
+    public static Class<?> compileAndLoadToCustomClassLoader(String qualifiedClass, String content, CompileOptions compileOptions) {
         ClassLoader cl = MethodHandles.lookup().lookupClass().getClassLoader();
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -49,7 +47,7 @@ public class CustomCompile {
             ClassFileManager fileManager = new ClassFileManager(compiler.getStandardFileManager(null, null, null));
 
             List<CharSequenceJavaFileObject> files = new ArrayList<CharSequenceJavaFileObject>();
-            files.add(new CharSequenceJavaFileObject(className, content));
+            files.add(new CharSequenceJavaFileObject(qualifiedClass, content));
             StringWriter out = new StringWriter();
 
             List<String> options = new ArrayList<String>();
@@ -85,7 +83,7 @@ public class CustomCompile {
 
             // This works if we have private-access to the interfaces in the class hierarchy
             if (Reflect.CACHED_LOOKUP_CONSTRUCTOR != null) {
-                result = fileManager.loadAndReturnMainClass(className,
+                result = fileManager.loadAndReturnMainClass(qualifiedClass,
                                                             (name, bytes) -> Reflect.on(new CustomClassLoader(cl))
                                                                                     .call("defineClass", name, bytes, 0, bytes.length).get());
             }
@@ -94,7 +92,7 @@ public class CustomCompile {
         } catch (ReflectException e) {
             throw e;
         } catch (Exception e) {
-            throw new ReflectException("Error while compiling " + className, e);
+            throw new ReflectException("Error while compiling " + qualifiedClass, e);
         }
     }
 
