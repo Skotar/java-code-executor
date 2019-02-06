@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class Scratch {
 
+    private Logger _logger;
+
     @Autowired
     private NodeService nodeService;
 
@@ -22,8 +24,8 @@ public class Scratch {
     public void execute() {
         NodeRef person = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
 
-        System.out.println(nodeService.getProperty(person, ContentModel.PROP_FIRSTNAME));
-        System.out.println("End");
+        _logger.debug("First name: {}", nodeService.getProperty(person, ContentModel.PROP_FIRSTNAME));
+        _logger.debug("End");
     }
 
 }
