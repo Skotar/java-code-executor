@@ -1,22 +1,22 @@
-# Alfresco Java code executor
+# ACS Java code executor
 
-This project was made on DevCon 2019 Hacathon. The target of this project is to execute Java code on the running server (Alfresco). 
+This project was initiated on DevCon 2019 Hacathon. The target of this project is to execute Java code on the running server (Alfresco Content Services). 
 
-The project consists of two parts: Alfresco platform module and IntelliJ plugin.
+The project consists of two parts: ACS platform module and IntelliJ plugin.
 
 ## What does this project offer?
 
-* executing any piece of code on running server
-* code is compiled on the server
-* compiled code isn't added to main ClassLoader
-* debugger support
-* support for Spring annotations
-* messages writing using System.out are accumulated and returned to user
+* Executing a piece of code on a running server
+* Code is compiled on the server
+* Compiled code isn't added to the main ClassLoader - new ClassLoader, that is the child of the main ClassLoader, is created, the code is executed and the reference to new ClassLoader is lost (child ClassLoader is used only for code execution)
+* Debugger support
+* Support for Spring annotations
+* Messages writing using dedicated logger are accumulated and returned to the user (standard appenders are excluded)
 * IntelliJ plugin allows you executing code directly from IDE
 
-## How does it work?
+## Flow chart
 
-1. You have a piece of code. The only requirement is to put **public void execute()** method because it is input to your code. Example:
+1. Make **POST** request with your code (contained in **binary data**) on **/service/api/javaCodeExecutor/execute**. Example:
 ```
 package pl.beone.scratchcodeexecutor.scratch;
 
@@ -31,6 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class Scratch {
 
+    private Logger _logger;
+
     @Autowired
     private NodeService nodeService;
 
@@ -42,33 +44,44 @@ public class Scratch {
     public void execute() {
         NodeRef person = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
 
-        System.out.println(nodeService.getProperty(person, ContentModel.PROP_FIRSTNAME));
+        _logger.debug("First name: {}", nodeService.getProperty(person, ContentModel.PROP_FIRSTNAME));
+        _logger.debug("End");
+
+        logger.error("End");
     }
 
 }
 ```
-2. Make POST request with your code (contained in binary data) on /service/api/javaCodeExecutor/execute
-3. Receive response in the following format:
+2. Receive a response in the following format:
 ```
 {
     "messages": [
-        "message one",
-        "message two"
+        "2019-02-07 19:28:29,733  DEBUG [scratchcodeexecutor.scratch.Scratch-60] [http-nio-8080-exec-3] First name: Administrator",
+        "2019-02-07 19:28:29,734  DEBUG [scratchcodeexecutor.scratch.Scratch-60] [http-nio-8080-exec-3] End"
     ]
 }
 ```
-If response code is 200 - everything went well. Messages array contains messages written using System.out.
+* Response code is 200 - everything went well. Messages array contains messages written using dedicated logger
+* Response code isn't 200 - something went wrong. Messages array contains the cause of error (compilation problems, stack trace etc.)
 
-If response code doesn't equal to 200 - something went wrong. Messages array contains the cause of error.
+## Requirements
+* The file must have a package name (IntelliJ scratch module doesn't include package name by default) 
+* The file must contain a class
+* The class must contain the following method: **public void execute()** (it's input to your code) 
+* *Optional* If you put logger without any value (for example **private Logger _logger;**), the dedicated logger is injected (output is redirected to user)
 
 ## Setup
+You can use files from **Releases** or build it yourself
 ### ACS module
-Module is based on SDK 4.0.0 so you can build module and run ACS using
+The module is based on SDK 4.0.0 so you can build the module and run ACS using
 ```
 ./run.sh build_start
 ```
 from **mm/java-code-executor** path.
 
 ### IntelliJ plugin
-Open **plugin/java-code-executor** in IntelliJ and run **Build -> Prepare Plugin Module 'java-code-executor' For Deployment**.
-After it, install **java-code-executor.jar** as IntelliJ plugin.
+Run
+```
+./gradlew runIde
+```
+from **plugin/java-code-executor** path.
