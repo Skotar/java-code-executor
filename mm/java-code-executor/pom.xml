@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>pl.beone.module</groupId>
     <artifactId>java-code-executor</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>2.0.0</version>
     <name>java-code-executor</name>
     <packaging>jar</packaging>
 
@@ -371,7 +371,6 @@
                     the layout of your AMP. The end result is that Maven will produce both a JAR file and an AMP with your
                     module.
                 -->
-            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -397,7 +396,6 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            -->
 
             <!-- Hot reloading with JRebel -->
             <plugin>
