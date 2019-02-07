@@ -1,6 +1,7 @@
 package pl.beone.javacodeexecutor.internal
 
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.log4j.Category
 import org.apache.log4j.Level
 import org.apache.log4j.PatternLayout
 import org.apache.log4j.WriterAppender
@@ -103,18 +104,33 @@ class ClassLoaderJvmExecutor(private val autowireCapableBeanFactory: AutowireCap
     }
 
     private fun createLoggerWithRedirectedOutput(qualifiedName: String): Pair<Logger, StringWriter> {
-        val logger = org.apache.log4j.Logger.getLogger("$qualifiedName-${getUniqueId()}")
-        logger.level = Level.ALL
+        val logger = org.apache.log4j.Logger.getLogger("$qualifiedName-${getUniqueId()}").apply {
+            level = Level.ALL
+        }
 
-        val stringWriter = StringWriter()
-        val writerAppender = WriterAppender(PatternLayout("%d{ISO8601} %x %-5p [%c{3}] [%t] %m%n "), stringWriter)
-        logger.addAppender(writerAppender)
+        val stringWriter = createStringWriter(logger)
+        disableAppendersFromParents(logger)
 
         return Pair(Log4jLoggerAdapterFactory.getLogger(logger), stringWriter)
     }
 
     private fun getUniqueId(): Long =
             Thread.currentThread().id
+
+    private fun createStringWriter(logger: org.apache.log4j.Logger): StringWriter {
+        val stringWriter = StringWriter()
+        val writerAppender = WriterAppender(PatternLayout("%d{ISO8601} %x %-5p [%c{3}] [%t] %m%n "), stringWriter)
+        logger.addAppender(writerAppender)
+        return stringWriter
+    }
+
+    private fun disableAppendersFromParents(logger: org.apache.log4j.Logger) {
+        Category::class.java.getDeclaredField("parent").apply {
+            isAccessible = true
+            set(logger, null)
+            isAccessible = false
+        }
+    }
 
     private fun injectLoggerIfConditionsAreMet(classInstance: Any, logger: Logger) {
         val loggerFields = classInstance::class.java.declaredFields
