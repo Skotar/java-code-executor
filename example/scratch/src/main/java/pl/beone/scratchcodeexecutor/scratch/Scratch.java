@@ -26,6 +26,8 @@ public class Scratch {
 
         _logger.debug("First name: {}", nodeService.getProperty(person, ContentModel.PROP_FIRSTNAME));
         _logger.debug("End");
+
+        logger.error("End");
     }
 
 }
