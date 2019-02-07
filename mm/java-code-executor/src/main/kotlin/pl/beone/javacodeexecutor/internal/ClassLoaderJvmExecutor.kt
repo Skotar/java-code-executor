@@ -124,6 +124,8 @@ class ClassLoaderJvmExecutor(private val autowireCapableBeanFactory: AutowireCap
         return stringWriter
     }
 
+    // log4j implementation goes through hierarchy and invokes logger appenders on every level
+    // default Alfresco RootLogger contains i.a. console as the output
     private fun disableAppendersFromParents(logger: org.apache.log4j.Logger) {
         Category::class.java.getDeclaredField("parent").apply {
             isAccessible = true
