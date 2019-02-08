@@ -14,6 +14,9 @@ The project consists of two parts: ACS platform module and IntelliJ plugin.
 * Messages writing using dedicated logger are accumulated and returned to the user (standard appenders are excluded)
 * IntelliJ plugin allows you executing code directly from IDE
 
+## Quick presentation
+[![Click to Watch!](https://i.imgur.com/zAhESua.png)](https://vimeo.com/316038983 "Click to Watch!")
+
 ## Flow chart
 
 1. Make **POST** request with your code (contained in **binary data**) on **/service/api/javaCodeExecutor/execute**. Example:
