@@ -13,7 +13,7 @@ plugins {
 }
 
 group 'pl.beone.intellij.plugin'
-version '2.0.0'
+version '2.0.1'
 
 sourceCompatibility = 1.8
 
@@ -34,6 +34,7 @@ apply plugin: 'kotlin'
 
 intellij {
     version 'IC-2018.3.4'
+    updateSinceUntilBuild false
 }
 
 patchPluginXml {
