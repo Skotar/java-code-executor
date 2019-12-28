@@ -1,5 +1,7 @@
 # ACS Java code executor
 
+## This project is no longer maintained. Use [Alfresco JVM Console](https://github.com/Skotar/alfresco-jvm-console) as a better alternative.
+
 This project was initiated on DevCon 2019 Hacathon. The target of this project is to execute Java code on the running server (Alfresco Content Services). 
 
 The project consists of two parts: ACS platform module and IntelliJ plugin.
